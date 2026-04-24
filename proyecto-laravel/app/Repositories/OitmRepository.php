@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\IOitmRepository;
-use App\Models\Oitm;
+use App\Models\OITM;
 use Illuminate\Http\Request;
 
 class OitmRepository implements IOitmRepository
@@ -17,7 +17,7 @@ class OitmRepository implements IOitmRepository
     public function getByKey(string $itemCode): array
     {
         try {
-            $elemento = Oitm::find($itemCode);
+            $elemento = OITM::find($itemCode);
             if ($elemento) {
                 return [
                     'success' => true,
@@ -72,7 +72,7 @@ class OitmRepository implements IOitmRepository
     public function update(Oitm $elemento): array
     {
         try {
-            $existing = Oitm::find($elemento->ItemCode);
+            $existing = OITM::find($elemento->ItemCode);
             if (!$existing) {
                 return [
                     'success' => false,
@@ -104,7 +104,7 @@ class OitmRepository implements IOitmRepository
     public function delete(string $itemCode): array
     {
         try {
-            $elemento = Oitm::find($itemCode);
+            $elemento = OITM::find($itemCode);
             if (!$elemento) {
                 return [
                     'success' => false,
@@ -137,7 +137,7 @@ class OitmRepository implements IOitmRepository
     public function patch(Request $request, string $itemCode): array
     {
         try {
-            $elemento = Oitm::find($itemCode);
+            $elemento = OITM::find($itemCode);
             if (!$elemento) {
                 return [
                     'success' => false,
@@ -172,7 +172,7 @@ class OitmRepository implements IOitmRepository
     public function search(?string $itemCode = null): array
     {
         try {
-            $query = Oitm::query();
+            $query = OITM::query();
 
             if ($itemCode) {
                 $query->where('ItemCode', 'like', $itemCode . '%');

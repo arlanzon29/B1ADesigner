@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Oitm extends Model
+class OITM extends Model
 {
     protected $table = 'oitm';
     protected $primaryKey = 'ItemCode';

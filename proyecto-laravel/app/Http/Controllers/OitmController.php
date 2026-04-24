@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\IOitmRepository;
-use App\Models\Oitm;
+use App\Models\OITM;
 use Illuminate\Http\Request;
 
 class OitmController extends Controller
@@ -50,7 +50,7 @@ class OitmController extends Controller
      */
     public function update(Request $request, string $itemCode)
     {
-        $elemento = Oitm::find($itemCode);
+        $elemento = OITM::find($itemCode);
         if (!$elemento) {
             $elemento = new Oitm();
             $elemento->ItemCode = $itemCode;

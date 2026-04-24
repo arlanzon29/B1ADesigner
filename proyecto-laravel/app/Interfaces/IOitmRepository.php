@@ -2,10 +2,10 @@
 
 namespace App\Interfaces;
 
-use App\Models\Oitm;
+use App\Models\OITM;
 use Illuminate\Http\Request;
 
-interface IOitmRepository
+interface IOITMRepository
 {
     /**
      * Obtiene un artículo por su clave primaria.
@@ -18,18 +18,18 @@ interface IOitmRepository
     /**
      * Añade un nuevo artículo.
      *
-     * @param Oitm $elemento
+     * @param OITM $elemento
      * @return array
      */
-    public function add(Oitm $elemento): array;
+    public function add(OITM $elemento): array;
 
     /**
      * Actualiza un artículo existente.
      *
-     * @param Oitm $elemento
+     * @param OITM $elemento
      * @return array
      */
-    public function update(Oitm $elemento): array;
+    public function update(OITM $elemento): array;
 
     /**
      * Elimina un artículo por su clave.

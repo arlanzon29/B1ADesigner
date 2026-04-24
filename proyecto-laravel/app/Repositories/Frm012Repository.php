@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\IFrm012Repository;
-use App\Models\Oitm;
+use App\Models\OITM;
 
 class Frm012Repository implements IFrm012Repository
 {
@@ -16,7 +16,7 @@ class Frm012Repository implements IFrm012Repository
     public function getByKey(string $itemCode): array
     {
         try {
-            $elemento = Oitm::find($itemCode);
+            $elemento = OITM::find($itemCode);
             if ($elemento) {
                 return [
                     'success' => true,

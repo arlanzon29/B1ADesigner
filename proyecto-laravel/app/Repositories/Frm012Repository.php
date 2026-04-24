@@ -4,23 +4,23 @@ namespace App\Repositories;
 
 use App\Interfaces\IFrm012Repository;
 use App\Models\OITM;
+use App\ModelsForms\Frm012Unbound;
 
 class Frm012Repository implements IFrm012Repository
 {
-    /**
-     * Obtiene los datos de un artículo.
-     *
-     * @param string $itemCode
-     * @return array
-     */
     public function getByKey(string $itemCode): array
     {
         try {
             $elemento = OITM::find($itemCode);
             if ($elemento) {
+                $modelo = new Frm012Unbound(
+                    $elemento->ItemCode,
+                    $elemento->ItemName,
+                    (float) $elemento->OnHand
+                );
                 return [
                     'success' => true,
-                    'data' => $elemento,
+                    'data' => $modelo,
                     'message' => 'Artículo encontrado'
                 ];
             }

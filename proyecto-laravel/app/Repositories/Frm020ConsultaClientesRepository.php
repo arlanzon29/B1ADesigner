@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\IFrm020ConsultaClientesRepository;
+use App\InterfacesForm\IFrm020ConsultaClientesRepository;
 use App\ModelsForms\Frm020Unbound;
 use App\ModelsForms\Frm020DbgClientes;
 use Illuminate\Support\Facades\DB;

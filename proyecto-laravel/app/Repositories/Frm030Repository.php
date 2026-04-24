@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\IFrm030Repository;
+use App\InterfacesForm\IFrm030fichaClienteRepository;
 use App\Models\Ocrd;
 
 class Frm030Repository implements IFrm030Repository

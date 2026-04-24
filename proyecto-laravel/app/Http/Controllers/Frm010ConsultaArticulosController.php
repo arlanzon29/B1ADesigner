@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Interfaces\IFrm010ConsultaArticulosRepository;
+use App\InterfacesForm\IFrm010ConsultaArticulosRepository;
 use Illuminate\Http\Request;
 
 class Frm010ConsultaArticulosController extends Controller

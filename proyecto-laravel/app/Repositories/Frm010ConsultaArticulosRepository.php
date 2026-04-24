@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\IFrm010ConsultaArticulosRepository;
+use App\InterfacesForm\IFrm010ConsultaArticulosRepository;
 use App\ModelsForms\Frm010Unbound;
 use App\ModelsForms\Frm010DbgArticulos;
 use Illuminate\Support\Facades\DB;

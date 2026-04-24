@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface IFrm030Repository
+interface IFrm030fichaClienteRepository
 {
     /**
      * Obtiene los datos de un cliente.

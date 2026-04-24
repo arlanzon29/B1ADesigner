@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\IFrm012Repository;
+use App\InterfacesForm\IFrm012fichaArticuloRepository;
 use App\Models\OITM;
 use App\ModelsForms\Frm012Unbound;
 

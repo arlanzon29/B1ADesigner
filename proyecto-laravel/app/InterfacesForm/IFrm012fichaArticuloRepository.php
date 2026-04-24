@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface IFrm012Repository
+interface IFrm012fichaArticuloRepository
 {
     /**
      * Obtiene los datos de un artículo.

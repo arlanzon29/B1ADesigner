@@ -10,11 +10,21 @@ description: Sirve para crear componentes Laravel siguiendo un pseudocodigo
 - Para cada tabla se deben crear los siguientes archivos:
     1. **Migración** en `database/migrations/`
     2. **Modelo** en `app/Models/`
-    3. **Interfaz** en `app/Interfaces/`
+    3. **Interfaz** en `app/Interfaces/` (para tablas de BD)
     4. **Repositorio** en `app/Repositories/`
     5. **Controlador** en `app/Http/Controllers/`
     6. **Rutas API** en `routes/api.php` (incluir import del controlador y nombre completo de pantalla)
     7. **ServiceProvider** registrar el binding de la interfaz al repositorio en `app/Providers/AppServiceProvider.php`
+
+- Las **interfaces de tablas de BD** van en `app/Interfaces/` con prefijo `I` + nombre tabla (ej: `IOITMRepository`)
+- Las **interfaces de pantallas** van en `app/InterfacesForm/` con nombre completo (ej: `IFrm012fichaArticuloRepository`)
+- Los **modelos de pantallas** van en `app/ModelsForms/`
+
+## Nomenclatura de archivos
+
+**IMPORTANTE**: Usar el nombre completo de la pantalla (no solo el número):
+- Correcto: `IFrm012fichaArticuloRepository.php`
+- Incorrecto: `IFrm012Repository.php`
 
 ## Nomenclatura de rutas
 
@@ -26,7 +36,7 @@ Usar el nombre completo de la pantalla:
 
 **Fichas** (pantallas de detalle): Usan GET con query string
 ```php
-Route::get('/frm012fichaarticulo', [Frm012Controller::class, 'getByKey']);
+Route::get('/frm012fichaarticulo', [Frm012fichaArticuloController::class, 'getByKey']);
 
 // Controller
 public function getByKey(Request $request)
@@ -38,7 +48,7 @@ public function getByKey(Request $request)
 
 **Consultas** (pantallas de lista): Usan POST con modelo Unbound
 ```php
-Route::post('/frm010consultaarticulos', [Frm010ConsultaArticulosController::class, 'consultar']);
+Route::post('/frm010consultaarticulos', [Frm010consultaArticulosController::class, 'consultar']);
 
 // Controller
 public function consultar(Request $request)
@@ -50,9 +60,10 @@ public function consultar(Request $request)
 
 **AppServiceProvider**: IMPORTANTE incluir los imports de los Repositorios
 ```php
-use App\Repositories\Frm010ConsultaArticulosRepository;
+use App\InterfacesForm\IFrm010consultaArticulosRepository;
+use App\Repositories\Frm010consultaArticulosRepository;
 
-$this->app->bind(IFrm010ConsultaArticulosRepository::class, Frm010ConsultaArticulosRepository::class);
+$this->app->bind(IFrm010consultaArticulosRepository::class, Frm010consultaArticulosRepository::class);
 ```
 
 ## Archivos a crear
@@ -66,7 +77,7 @@ app/Models/[Nombre].php
 ### Para pantallas (no BD)
 ```
 app/ModelsForms/[FrmXXXCompleto]Models.php    // Modelos de pantalla
-app/Interfaces/I[FrmXXXCompleto]Repository.php
+app/InterfacesForm/I[FrmXXXCompleto]Repository.php
 app/Repositories/[FrmXXXCompleto]Repository.php
 app/Http/Controllers/[FrmXXXCompleto]Controller.php
 routes/api.php (incluir import del controlador)
@@ -296,11 +307,21 @@ class dbgArticulosFrm010consultaarticulos
 
 **En la interfaz:**
 ``` Codigo PHP/Laravel
-interface IFrm010consultaarticulosRepository
+namespace App\InterfacesForm;
+
+use App\ModelsForms\Frm010Unbound;
+
+interface IFrm010consultaArticulosRepository
 {
-    public function consultarArticulos(unboundFrm010consultaarticulos $filtro): array;
+    public function consultarArticulos(Frm010Unbound $filtro): array;
 }
 ```
+
+**Ejemplo correcto:**
+- `IFrm010consultaArticulosRepository` (nombre completo)
+
+**Ejemplo incorrecto:**
+- `IFrm010Repository` (falta descripción)
 
 ### Mapeo Request a Unbound en Pantallas
 
@@ -429,17 +450,17 @@ Esto se traduciría con:
 
 namespace App\Interfaces;
 
-use App\Models\OitmModelo;
+use App\Models\OITMModelo;
 
-interface IOitmRepository
+interface IOITMRepository
 {
     /**
-     * Añade un objeto OitmModelo
+     * Añade un objeto OITMModelo
      *
-     * @param OitmModelo $elemento
+     * @param OITMModelo $elemento
      * @return array con los datos del artículo
      */
-    public function add(OitmModelo $elemento): array;
+    public function add(OITMModelo $elemento): array;
 }
 ```
 
@@ -547,9 +568,12 @@ class OitmRepository implements IOitmRepository
 
 Después de crear la interfaz y el repositorio, registrar el binding en `app/Providers/AppServiceProvider.php`:
 
+- Para **tablas de BD**: usar `App\Interfaces\`
+- Para **pantallas**: usar `App\InterfacesForm\`
+
 ```php
 // En el método register()
-use App\Interfaces\IFrm012fichaArticuloRepository;
+use App\InterfacesForm\IFrm012fichaArticuloRepository;
 use App\Repositories\Frm012fichaArticuloRepository;
 
 $this->app->bind(IFrm012fichaArticuloRepository::class, Frm012fichaArticuloRepository::class);

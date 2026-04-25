@@ -5,6 +5,8 @@ description: Sirve para crear componentes Laravel siguiendo un pseudocodigo
 
 # Normas para la creación de un componente Laravel
 
+- **Los modelos Eloquent deben usar nombres en mayúsculas** (ej: `OITT`, `ITT1`, `OITM`)
+- Los nombres de archivos de modelos deben usar mayúsculas (ej: `OITT.php`, `ITT1.php`)
 - El objetivo es fijar una serie de normas para poder generar código PHP/Laravel a partir de un pseudocódigo
 - Las rutas API deben usar el nombre completo de la pantalla (ej: `frm012ficharticulo`) para mantener consistencia
 - Para cada tabla se deben crear los siguientes archivos:

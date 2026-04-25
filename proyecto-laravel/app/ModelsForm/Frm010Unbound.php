@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ModelsForms;
+namespace App\ModelsForm;
 
 class Frm010Unbound
 {

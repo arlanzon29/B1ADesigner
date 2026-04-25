@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\InterfacesForm\IFrm010ConsultaArticulosRepository;
-use App\ModelsForms\Frm010Unbound;
-use App\ModelsForms\Frm010DbgArticulos;
+use App\ModelsForm\Frm010Unbound;
+use App\ModelsForm\Frm010DbgArticulos;
 use Illuminate\Support\Facades\DB;
 
 class Frm010ConsultaArticulosRepository implements IFrm010ConsultaArticulosRepository

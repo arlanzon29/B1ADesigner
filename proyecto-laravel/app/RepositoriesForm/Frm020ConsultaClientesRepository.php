@@ -3,8 +3,8 @@
 namespace App\Repositories;
 
 use App\InterfacesForm\IFrm020ConsultaClientesRepository;
-use App\ModelsForms\Frm020Unbound;
-use App\ModelsForms\Frm020DbgClientes;
+use App\ModelsForm\Frm020Unbound;
+use App\ModelsForm\Frm020DbgClientes;
 use Illuminate\Support\Facades\DB;
 
 class Frm020ConsultaClientesRepository implements IFrm020ConsultaClientesRepository

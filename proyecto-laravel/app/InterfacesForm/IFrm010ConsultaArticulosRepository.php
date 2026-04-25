@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-use App\ModelsForms\Frm010Unbound;
+use App\ModelsForm\Frm010Unbound;
 
 interface IFrm010ConsultaArticulosRepository
 {

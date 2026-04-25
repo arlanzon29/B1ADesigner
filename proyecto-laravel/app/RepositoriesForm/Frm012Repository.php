@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\InterfacesForm\IFrm012fichaArticuloRepository;
 use App\Models\OITM;
-use App\ModelsForms\Frm012Unbound;
+use App\ModelsForm\Frm012Unbound;
 
 class Frm012Repository implements IFrm012Repository
 {

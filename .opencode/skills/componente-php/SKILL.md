@@ -13,14 +13,15 @@ description: Sirve para crear componentes Laravel siguiendo un pseudocodigo
     1. **Migración** en `database/migrations/`
     2. **Modelo** en `app/Models/`
     3. **Interfaz** en `app/Interfaces/` (para tablas de BD)
-    4. **Repositorio** en `app/Repositories/`
+    4. **Repositorio** en `app/Repositories/` (para tablas de BD)
     5. **Controlador** en `app/Http/Controllers/`
     6. **Rutas API** en `routes/api.php` (incluir import del controlador y nombre completo de pantalla)
     7. **ServiceProvider** registrar el binding de la interfaz al repositorio en `app/Providers/AppServiceProvider.php`
 
 - Las **interfaces de tablas de BD** van en `app/Interfaces/` con prefijo `I` + nombre tabla (ej: `IOITMRepository`)
 - Las **interfaces de pantallas** van en `app/InterfacesForm/` con nombre completo (ej: `IFrm012fichaArticuloRepository`)
-- Los **modelos de pantallas** van en `app/ModelsForms/`
+- Los **repositorios de pantallas** van en `app/RepositoriesForm/`
+- Los **modelos de pantallas** van en `app/ModelsForm/`
 
 ## Nomenclatura de archivos
 

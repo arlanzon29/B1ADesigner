@@ -17,7 +17,7 @@
 
 ## Servicios
 
-- Crear: Entrada(OigeServiceRequest) -> Salida(OIGE)
+- Crear: Entrada(OigeServiceRequest) -> Salida(OIGE), Transacción: Sí
   - Descripción: Crea la cabecera OIGE, las líneas IGE1, y actualiza el stock
   - Reglas de negocio:
     1. Validar que el artículo (ItemCode) existe en OITM

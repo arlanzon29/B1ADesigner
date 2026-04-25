@@ -428,7 +428,11 @@ especificaciones/
 - El título debe ser `#` seguido del nombre del servicio y "- Servicio"
 - **## Modelo de datos**: define los objetos de entrada/salida
 - **## Servicios**: lista de métodos con su descripción y reglas de negocio
-- Usar transacción cuando hay múltiples operaciones que deben ser atómicas
+- **Indicar explícitamente si cada método usa transacción**: 
+  - `- Crear: Entrada(...) -> Salida(...), Transacción: Sí`
+  - `- Crear: Entrada(...) -> Salida(...), Transacción: No`
+  - El analista decide según la complejidad de las operaciones
+- Usar transacción cuando hay múltiples operaciones en distintas tablas que deben ser atómicas
 
 
 

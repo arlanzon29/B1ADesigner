@@ -101,6 +101,87 @@ routes/api.php (incluir import del controlador)
 app/Providers/AppServiceProvider.php (registrar binding)
 ```
 
+## Transacciones en Servicios
+
+### Indicación en Especificación
+
+En la especificación del servicio (`especificaciones/servicios/[Nombre].md`), indicar explícitamente si cada método usa transacción:
+
+```
+## Servicios
+- Crear: Entrada(...) -> Salida(...), Transacción: Sí
+- Buscar: Entrada(...) -> Salida(...), Transacción: No
+```
+
+**Al crear la implementación del servicio, si la especificación indica `Transacción: Sí`, envolver todo el método en `DB::transaction()`.**
+
+### Tipos de Servicios
+
+| Tipo | Descripción | Necesita Transacción |
+|------|-------------|---------------------|
+| **Simple** | CRUD básico de una sola tabla (Repository) | ✗ No |
+| **Principal** | Coordina múltiples operaciones en varias tablas | ✓ Sí |
+| **Consultas** | Solo lee datos | ✗ No |
+
+### Norma General
+
+- **Repository**: Nunca usa transacción
+- **Service simple** (una tabla): Nunca usa transacción
+- **Service principal** (múltiples tablas): Usa `DB::transaction()`
+
+### Ejemplo Service Principal con Transacción
+
+``` Codigo PHP/Laravel
+use Illuminate\Support\Facades\DB;
+
+class OigeService implements IOigeService
+{
+    public function crear(OigeServiceRequest $request): array
+    {
+        try {
+            return DB::transaction(function () use ($request) {
+                // 1. Validar artículos y almacenes
+                foreach ($request->Lineas as $linea) {
+                    $item = OITM::find($linea->ItemCode);
+                    if (!$item) {
+                        return ['success' => false, 'message' => 'Artículo no encontrado'];
+                    }
+                }
+
+                // 2. Crear cabecera
+                $cabecera = new OIGE();
+                $cabecera->Code = $request->Code;
+                $cabecera->DocDate = $request->DocDate;
+                $cabecera->save();
+
+                // 3. Crear líneas y actualizar stocks
+                $lineId = 1;
+                foreach ($request->Lineas as $linea) {
+                    // Crear línea...
+                    // Actualizar OITM.OnHand
+                    // Actualizar OITW.OnHand
+                    $lineId++;
+                }
+
+                return ['success' => true, 'data' => $cabecera];
+            });
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+}
+```
+
+### Tests de Servicios
+
+Los tests unitarios llaman directamente al Service (sin Controller):
+``` Codigo PHP/Laravel
+$service = new OigeService();
+$result = $service->crear($request);
+
+// Los tests funcionan porque el Service tiene la transacción integrada
+```
+
 ## Diseño de Pantalla
 
 ### Cabecera de la página

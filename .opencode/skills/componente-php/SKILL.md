@@ -19,6 +19,7 @@ description: Sirve para crear componentes Laravel siguiendo un pseudocodigo
     5. **Controlador** en `app/Http/Controllers/`
     6. **Rutas API** en `routes/api.php` (incluir import del controlador y nombre completo de pantalla)
     7. **ServiceProvider** registrar el binding de la interfaz al repositorio en `app/Providers/AppServiceProvider.php`
+    8. **Test** en `tests/Feature/<Tabla>ApiTest.php`
 
 - Las **interfaces de tablas de BD** van en `app/Interfaces/` con prefijo `I` + nombre tabla (ej: `IOITMRepository`)
 - Las **interfaces de pantallas** van en `app/InterfacesForm/` con nombre completo (ej: `IFrm012fichaArticuloRepository`)
@@ -428,33 +429,97 @@ class DbgAlbaranesModelo extends Model
 
 ## Definición de Servicios
 
-### Claves primarias compuestas
+## Claves primarias compuestas
 
-Para tablas con clave primaria compuesta (ej: `ITT1`, `CRD1`, `OITW`), usar `DB::table()` en los métodos update y delete:
+Para tablas con clave primaria compuesta (ej: `ITT1`, `CRD1`, `OITW`, `IGE1`), el modelo Eloquent no funciona correctamente con los métodos `save()` y `delete()` porque Laravel no maneja bien claves primarias que son arrays.
+
+**IMPORTANTE**: 
+- En el **modelo**: definir `protected $primaryKey = ['Code', 'LineId'];` y `public $incrementing = false;`
+- En el **repositorio**: usar `DB::table()` directamente para update y delete (NO usar Eloquent save/delete)
 
 ``` Codigo PHP/Laravel
-public function update(ITT1 $elemento): array
+// Modelo con clave compuesta
+class IGE1 extends Model
+{
+    protected $table = 'ige1';
+    protected $primaryKey = ['Code', 'LineId'];
+    public $incrementing = false;
+    public $timestamps = false;
+}
+```
+
+**Método update - USAR SIEMPRE DB::table():**
+``` Codigo PHP/Laravel
+public function update(IGE1 $elemento): array
 {
     try {
-        $existente = ITT1::where('Code', $elemento->Code)->where('LineId', $elemento->LineId)->first();
-        if (!$existente) {
-            return ['success' => false, 'data' => null, 'message' => 'No encontrado'];
-        }
-        DB::table('itt1')
-            ->where('Code', $elemento->Code)
+        $actualizado = IGE1::where('Code', $elemento->Code)
             ->where('LineId', $elemento->LineId)
             ->update([
                 'ItemCode' => $elemento->ItemCode,
-                'ItemName' => $elemento->ItemName,
+                'Dscripcion' => $elemento->Dscripcion,
                 'Quantity' => $elemento->Quantity,
+                'WhsCode' => $elemento->WhsCode
             ]);
-        $actualizado = ITT1::where('Code', $elemento->Code)->where('LineId', $elemento->LineId)->first();
-        return ['success' => true, 'data' => $actualizado, 'message' => 'Actualizado correctamente'];
+        if ($actualizado === 0) {
+            return ['success' => false, 'data' => null, 'message' => 'No encontrado'];
+        }
+        return ['success' => true, 'data' => $elemento, 'message' => 'Actualizado correctamente'];
     } catch (\Exception $e) {
         return ['success' => false, 'data' => null, 'message' => 'Error al actualizar: ' . $e->getMessage()];
     }
 }
 ```
+
+**Método delete - USAR SIEMPRE DB::table():**
+``` Codigo PHP/Laravel
+public function delete(string $code, int $lineId): array
+{
+    try {
+        $eliminado = IGE1::where('Code', $code)->where('LineId', $lineId)->delete();
+        if ($eliminado === 0) {
+            return ['success' => false, 'data' => null, 'message' => 'No encontrado'];
+        }
+        return ['success' => true, 'data' => null, 'message' => 'Eliminado correctamente'];
+    } catch (\Exception $e) {
+        return ['success' => false, 'data' => null, 'message' => 'Error al eliminar: ' . $e->getMessage()];
+    }
+}
+```
+
+**Controlador con parámetros de ruta:**
+``` Codigo PHP/Laravel
+// Rutas con parámetros
+Route::get('/ige1/{code}/{lineId}', [IGE1Controller::class, 'getByKey']);
+Route::put('/ige1/{code}/{lineId}', [IGE1Controller::class, 'update']);
+Route::delete('/ige1/{code}/{lineId}', [IGE1Controller::class, 'delete']);
+
+// Controller
+public function getByKey(string $code, int $lineId)
+{
+    return $this->repository->getByKey($code, $lineId);
+}
+
+public function update(Request $request, string $code, int $lineId)
+{
+    $elemento = new IGE1();
+    $elemento->Code = $code;
+    $elemento->LineId = $lineId;
+    $elemento->ItemCode = $request->input('ItemCode');
+    // ...
+    return $this->repository->update($elemento);
+}
+
+public function delete(string $code, int $lineId)
+{
+    return $this->repository->delete($code, $lineId);
+}
+```
+
+**Errores comunes si no se sigue esta norma:**
+- `Illegal offset type` - al usar `save()` en modelo con clave compuesta
+- `null given` - al recibir parámetros de ruta incorrectamente en el controller
+- `Foreign key constraint failed` - al ejecutar tests sin crear datos relacionados
 
 En el pseudocódigo podemos indicar una serie de servicios que podemos utilizar, vamos a crear una interfaz con una serie de funciones que devuelven
 tipo array.

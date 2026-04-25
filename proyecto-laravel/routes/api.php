@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\OitmController;
 use App\Http\Controllers\OCRDController;
+use App\Http\Controllers\OIGEController;
 use App\Http\Controllers\Frm010ConsultaArticulosController;
 use App\Http\Controllers\Frm020ConsultaClientesController;
 use App\Http\Controllers\Frm012Controller;
@@ -10,6 +11,7 @@ use App\Http\Controllers\CRD1Controller;
 use App\Http\Controllers\OITWController;
 use App\Http\Controllers\OITTController;
 use App\Http\Controllers\ITT1Controller;
+use App\Http\Controllers\IGE1Controller;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/frm010consultaarticulos', [Frm010ConsultaArticulosController::class, 'consultar']);
@@ -53,3 +55,14 @@ Route::post('/itt1', [ITT1Controller::class, 'add']);
 Route::put('/itt1/{code}/{lineId}', [ITT1Controller::class, 'update']);
 Route::delete('/itt1/{code}/{lineId}', [ITT1Controller::class, 'delete']);
 Route::get('/itt1/search', [ITT1Controller::class, 'getByCode']);
+
+Route::get('/oige/{code}', [OIGEController::class, 'getByKey']);
+Route::post('/oige', [OIGEController::class, 'add']);
+Route::put('/oige/{code}', [OIGEController::class, 'update']);
+Route::delete('/oige/{code}', [OIGEController::class, 'delete']);
+
+Route::get('/ige1', [IGE1Controller::class, 'getByCode']);
+Route::get('/ige1/{code}/{lineId}', [IGE1Controller::class, 'getByKey']);
+Route::post('/ige1', [IGE1Controller::class, 'add']);
+Route::put('/ige1/{code}/{lineId}', [IGE1Controller::class, 'update']);
+Route::delete('/ige1/{code}/{lineId}', [IGE1Controller::class, 'delete']);

@@ -1,9 +1,9 @@
 ---
 name: crear-analisis
-description: Skill que permite crear especificaciones de pantallas en formato pseudocódigo para generar pantallas PHP/Laravel, y especificaciones de tablas de base de datos.
+description: Genera especificaciones técnicas en formato pseudocódigo para pantallas PHP/Laravel, tablas de base de datos y servicios de negocio. Úsalo siempre que el usuario pida crear una pantalla, formulario, consulta, ficha, tabla de BD, o servicio en un proyecto Laravel/PHP, aunque no lo llame explícitamente "pseudocódigo" o "especificación". También se activa si el usuario menciona grids, filtros, albaranes, artículos, almacenes u otras entidades de negocio típicas de ERP.
 ---
 
-# Guía para crear pseudocódigo de pantallas PHP/Laravel
+# Guía para crear especificaciones de pantallas PHP/Laravel
 
 Esta guía explica cómo escribir el **pseudocódigo necesario para generar una pantalla PHP/Laravel** sin necesidad de conocer programación web.
 
@@ -11,34 +11,66 @@ El pseudocódigo describe:
 
 1. **Controles de la pantalla**
 2. **Listas de datos (grids)**
-3. **Datos que usa la pantalla**
+3. **Modelos de datos que usa la pantalla**
 4. **Servicios necesarios (interfaces y repositorios)**
 
 La idea es **describir la pantalla como si fuese un formulario en papel**.
 
----
-
 > **Ver ejemplos reales** en la carpeta `examples/`:
-> - `001-OITM-tabla-articulos.md` - Ejemplo de tabla de base de datos
-> - `010-consulta-articulos.md` - Ejemplo de pantalla de consulta
+> - `001-OITM-tabla-articulos.md` — Ejemplo de tabla de base de datos
+> - `010-consulta-articulos.md` — Ejemplo de pantalla de consulta
 
 ---
 
-# 1. Cómo diseñar la pantalla
+## Tipos de especificaciones
 
-Primero piensa la pantalla como un formulario dividido en bloques:
+Este skill cubre tres tipos de documentos:
 
-Normalmente una pantalla tiene:
+| Tipo | Cuándo usarlo | Carpeta |
+|---|---|---|
+| **Pantalla** | Formularios, consultas, fichas | `especificaciones/pantallas/` |
+| **Tabla de BD** | Maestros y estructuras de datos | `especificaciones/base-de-datos/` |
+| **Servicio** | Lógica de negocio con varias tablas | `especificaciones/servicios/` |
 
+---
+
+## Tipos de datos válidos
+
+Usar siempre estos tipos en los modelos:
+
+| Tipo | Uso |
+|---|---|
+| `String` | Texto, códigos, descripciones |
+| `Integer` | Números enteros |
+| `Decimal` | Cantidades, importes |
+| `Boolean` | Verdadero/Falso |
+| `Date` | Solo fecha |
+| `DateTime` | Fecha y hora |
+
+---
+
+## Nomenclatura de archivos y modelos
+
+Los archivos de pantallas siguen el formato:
 ```
-[Filtros o datos de búsqueda]
-
-[Botón buscar]
-
-[Lista de resultados]
+FrmXXXNombreCompleto.md
 ```
+Ejemplos: `Frm010consultaarticulos.md`, `Frm012fichaarticulo.md`
 
-Por ejemplo:
+El número `XXX` determina los nombres de los modelos:
+
+| Modelo | Patrón | Ejemplo |
+|---|---|---|
+| Datos del formulario | `unboundFrmXXX` | `unboundFrm010` |
+| Datos de un grid | `dbg<Nombre>FrmXXX` | `dbgAlbaranesFrm010` |
+
+---
+
+# PARTE 1 — Especificaciones de pantallas
+
+## 1. Diseña la pantalla en papel primero
+
+Antes de escribir pseudocódigo, dibuja la pantalla como un formulario:
 
 ```
 --------------------------------
@@ -52,16 +84,16 @@ Fecha        [_______] Tipo [__]
              [Buscar]
 
 --------------------------------
-          LISTA DE ALBARANES
+      LISTA DE ALBARANES
 --------------------------------
 Cliente | Articulo | Fecha | Cantidad
 ```
 
-Eso se traduce directamente a pseudocódigo.
+Ese dibujo se traduce directamente a pseudocódigo.
 
 ---
 
-# 2. Crear un bloque de controles
+## 2. Bloques de controles
 
 Un bloque de controles empieza siempre con:
 
@@ -75,112 +107,93 @@ Ejemplo:
 {div:Controles de edicion,data:unboundFrm010}
 ```
 
-Esto significa:
-
-* Título del bloque → "Controles de edición"
-* Datos asociados → unboundFrm010
+- **Titulo** → texto que aparece como cabecera del bloque
+- **Modelo** → nombre del objeto de datos asociado
 
 ---
 
-# 3. Escribir las filas de controles
+## 3. Filas de controles
 
-Cada línea representa **una fila de la tabla**.
-
-Ejemplo:
+Cada línea del bloque representa **una fila**. Las columnas se separan con `|`.
 
 ```
-Cliente | {txt:Cliente} | {txt:RazonSocial}
-```
-
-Esto significa:
-
-| Cliente | [textbox] | [textbox] |
-
-Otro ejemplo:
-
-```
+Cliente  | {txt:Cliente} | {txt:RazonSocial}
 Articulo | {txt:Articulo} | {txt:Descripcion}
+Fecha    | {txt:Fecha} | Tipo | {txt:Tipo}
 ```
 
----
+Resultado visual:
 
-# 4. Tipos de controles
-
-Solo necesitas conocer **unos pocos tipos de controles**.
-
-| Pseudocódigo             | Qué representa   |
-| ------------------------ | ---------------- |
-| {txt:Campo}              | Caja de texto    |
-| {btn:Nombre}             | Botón            |
-| {grid:Nombre,data:Lista} | Tabla de datos   |
-| {col:Campo}              | Columna del grid |
+| Etiqueta | Control | Control |
+|---|---|---|
+| Cliente | [textbox] | [textbox] |
+| Articulo | [textbox] | [textbox] |
+| Fecha | [textbox] | Tipo | [textbox] |
 
 ---
 
-# 5. Crear botones
+## 4. Tipos de controles
 
-Los botones se escriben así:
+| Pseudocódigo | Qué representa |
+|---|---|
+| `{txt:Campo}` | Caja de texto |
+| `{btn:Nombre}` | Botón |
+| `{grid:Nombre,data:Lista}` | Tabla de datos |
+| `{col:Campo}` | Columna dentro de un grid |
+
+> ⚠️ **Regla**: los nombres de campos no pueden tener espacios. Usar `RazonSocial`, no `Razon Social`.
+
+---
+
+## 5. Botones
 
 ```
 {btn:Buscar}
 ```
 
-Ejemplo completo:
-
-```
-{btn:Buscar}
-```
+Los botones se colocan solos en su propia línea, entre el bloque de filtros y el grid.
 
 ---
 
-# 6. Crear un grid (tabla de resultados)
+## 6. Grids (tablas de resultados)
 
-Los grids se usan para mostrar listas de datos.
+Un grid tiene tres partes:
 
-Empiezan con:
-
+**1. Declaración:**
 ```
-{grid:Titulo,data:Lista}
-```
-
-Ejemplo:
-
-```
-{grid:Datos Albaranes,data:dbgAlbaranesFrm010consultaarticulos}
+{grid:Datos Albaranes,data:dbgAlbaranesFrm010}
 ```
 
-Luego se ponen dos líneas:
-
-1️⃣ Títulos de columnas
-
+**2. Títulos de columnas** (texto visible):
 ```
 Cliente | Razón Social | Articulo | Descripcion | Fecha | Cantidad
 ```
 
-2️⃣ Campos
-
+**3. Campos** (nombres técnicos):
 ```
 {col:Cliente} | {col:RazonSocial} | {col:Articulo} | {col:Descripcion} | {col:Fecha} | {col:Cantidad}
 ```
 
+> Los títulos y los campos deben tener el **mismo número de columnas** en el mismo orden.
+
 ---
 
-# 7. Ejemplo completo de pantalla
+## 7. Ejemplo completo de pantalla
 
-## Prompt de origen
+### Prompt de origen
 > Crear una pantalla de consulta de albaranes filtrando por cliente y fecha.
 
-## Tipo de pantalla
+### Tipo de pantalla
+**CONSULTA** → Pantalla de búsqueda (usa GET con filtros)
 
-**CONSULTA** → Pantalla de lista/Buscar (usa GET con filtros)
+### Diseño de pantalla
 
-## Diseño de pantalla
-
+```
 {div:Controles de edicion,data:unboundFrm010}
 
-Cliente | {txt:Cliente} | {txt:RazonSocial}
+Cliente  | {txt:Cliente} | {txt:RazonSocial}
 Articulo | {txt:Articulo} | {txt:Descripcion}
-A Fecha | {txt:Fecha} | Tipo | {txt:Tipo}
+Fecha    | {txt:Fecha} | Tipo | {txt:Tipo}
 
 {btn:Buscar}
 
@@ -190,125 +203,69 @@ Cliente | Razón Social | Articulo | Descripcion | Fecha | Cantidad
 {col:Cliente} | {col:RazonSocial} | {col:Articulo} | {col:Descripcion} | {col:Fecha} | {col:Cantidad}
 ```
 
----
-
-# 8. Cómo definir los datos (Modelo)
-
-Después del diseño de pantalla hay que indicar **qué datos usa la pantalla**.
-
-Ejemplo:
+### Modelos de datos
 
 ```
 unboundFrm010: Objeto
-- Cliente: String
+- Cliente:     String
 - RazonSocial: String
-- Articulo: String
+- Articulo:    String
 - Descripcion: String
-- Fecha: DateTime
-- Tipo: String (S-Si;N-No)
-```
+- Fecha:       DateTime
+- Tipo:        String (S-Si;N-No)
 
-Esto representa los datos que el usuario introduce.
-
----
-
-Acerca del nombre de los modelos indicar las pantalla tienen un numero que identifica la pantalla por ejemplo Frm010consultaarticulos, este 010 va a determinar el nombre del modelo.
-
-Los archivos de especificaciones de pantallas tienen el formato:
-```
-FrmXXXNombreCompleto.md
-```
-
-Por ejemplo:
-- `Frm010consultaarticulos.md`
-- `Frm012fichaarticulo.md`
-
-Los campos de pantalla típicamente van en un modelo llamado `unboundFrmXXX`, por ejemplo `unboundFrm010`
-
-Los datos de los grids van en un modelo que empieza por `dbg<Nombre>FrmXXX`, por ejemplo `dbgAlbaranesFrm010`
-
-# 9. Cómo definir listas (grids)
-
-Para cada grid hay que definir su estructura.
-
-Ejemplo:
-
-```
 dbgAlbaranesFrm010: Objeto lista
-- Cliente: String
+- Cliente:     String
 - RazonSocial: String
-- Articulo: String
+- Articulo:    String
 - Descripcion: String
-- Fecha: DateTime
-- Cantidad: Decimal
+- Fecha:       DateTime
+- Cantidad:    Decimal
 ```
 
----
-
-# 10. Cómo definir servicios
-
-Si la pantalla necesita lógica de negocio se indican los servicios.
-
-Ejemplo:
+### Servicios
 
 ```
-Servicios
-
 BuscarAlbaranes
 Entrada: unboundFrm010
-Salida: Lista dbgAlbaranesFrm010
+Salida:  Lista dbgAlbaranesFrm010
 ```
 
-Los servicios se generan como Interfaces y Repositorios en Laravel.
-Puedes indicar una consulta SQL basada en las TABLAS (OITM,OCRD,OINV,OINV...), es algo opcional si esta claro.
+Con SQL opcional:
 
-- BuscarAlbaranes Entrada `unboundFrm010` salida `dbgAlbaranesFrm010`
-   - SQL:
-   ``` sql
-   SELECT
-      ODLN.CardCode Cliente,
-      OCRD.CardName RazonSocial,
-      ODLN.ItemCode Articulo,
-      OITM.DsName Descripcion,
-      ODLN.DocDate Fecha,
-      ODLN.Quantity Cantidad
-   FROM ODLN
-   INNER JOIN OCRD ON ODLN.CardCode = OCRD.CardCode
-   INNER JOIN OITM ON ODLN.ItemCode = OITM.ItemCode
-   WHERE ODLN.CardCode = @Cliente OR @Cliente IS NULL
-   ```
-
----
-
-# 11. Reglas importantes
-
-Para evitar errores:
-
-✔ Los nombres de campos deben coincidir en todos los sitios
-✔ Cada grid debe tener su lista de datos
-✔ Cada bloque debe indicar su modelo de datos
-✔ No usar espacios en los nombres de campos
-✔ **SIEMPRE** incluir la sección `## Prompt de origen` con el texto exacto que originó la pantalla.
-
-Ejemplo correcto:
-
-```
-RazonSocial
-```
-
-Ejemplo incorrecto:
-
-```
-Razon Social
+```sql
+SELECT
+   ODLN.CardCode  Cliente,
+   OCRD.CardName  RazonSocial,
+   ODLN.ItemCode  Articulo,
+   OITM.DsName    Descripcion,
+   ODLN.DocDate   Fecha,
+   ODLN.Quantity  Cantidad
+FROM ODLN
+INNER JOIN OCRD ON ODLN.CardCode = OCRD.CardCode
+INNER JOIN OITM ON ODLN.ItemCode = OITM.ItemCode
+WHERE ODLN.CardCode = @Cliente OR @Cliente IS NULL
 ```
 
 ---
 
-# 13. Cómo crear especificaciones de tablas de base de datos
+## 8. Orden recomendado para crear una pantalla
 
-Las especificaciones de tablas definen la estructura de tablas en la base de datos (no son pantallas).
+Seguir siempre este orden:
 
-## Formato
+1. Escribir `## Prompt de origen` con el texto exacto del usuario
+2. Dibujar la pantalla en papel (boceto)
+3. Escribir el bloque de controles `{div:...}`
+4. Añadir botones `{btn:...}`
+5. Añadir grids `{grid:...}`
+6. Definir los modelos de datos
+7. Definir los servicios (con SQL si aplica)
+
+---
+
+# PARTE 2 — Especificaciones de tablas de base de datos
+
+## 9. Formato de tabla de BD
 
 ```
 # OWHS - tabla de Almacenes
@@ -320,26 +277,24 @@ OWHS: Objeto
 - WhsName: String, descripción del almacén
 
 ## Servicios
-- Get: Entrada(WhsCode) -> Salida(OWHS)
-- Add: Entrada(OWHS) -> Salida(OWHS)
-- Update: Entrada(OWHS) -> Salida(OWHS)
+- Get:    Entrada(WhsCode) -> Salida(OWHS)
+- Add:    Entrada(OWHS)    -> Salida(OWHS)
+- Update: Entrada(OWHS)    -> Salida(OWHS)
 - Delete: Entrada(WhsCode) -> Salida(Boolean)
 ```
 
-## Reglas
+### Reglas
 
-- El título debe ser `#` seguido del nombre de la tabla y una descripción
-- **## Modelo de datos**: define los campos del objeto con formato `Campo: Tipo, descripción`
-- **## Servicios**: lista de servicios en una sola línea con guiones al principio
-- Formato de servicio: `- Nombre: Entrada(Tipo) -> Salida(Tipo)`
-- Los servicios siempre son: Get, Add, Update, Delete
+- El título sigue el formato: `# NOMBRE_TABLA - descripción`
+- Siempre incluir los cuatro servicios: `Get`, `Add`, `Update`, `Delete`
+- Cada campo lleva: `NombreCampo: Tipo, descripción breve`
 
-## Ejemplo completo
+### Ejemplo completo
 
-### Prompt de origen
+#### Prompt de origen
 > Crear una tabla OWHS de maestro de almacenes con dos campos: WhsCode (código) y WhsName (descripción).
 
-### Resultado
+#### Resultado
 
 ```
 # OWHS - tabla de Almacenes
@@ -351,88 +306,71 @@ OWHS: Objeto
 - WhsName: String, descripción del almacén
 
 ## Servicios
-- Get: Entrada(WhsCode) -> Salida(OWHS)
-- Add: Entrada(OWHS) -> Salida(OWHS)
-- Update: Entrada(OWHS) -> Salida(OWHS)
+- Get:    Entrada(WhsCode) -> Salida(OWHS)
+- Add:    Entrada(OWHS)    -> Salida(OWHS)
+- Update: Entrada(OWHS)    -> Salida(OWHS)
 - Delete: Entrada(WhsCode) -> Salida(Boolean)
 ```
 
 ---
 
-# 12. Forma recomendada de crear una pantalla
+# PARTE 3 — Especificaciones de servicios
 
-Siempre seguir este orden:
+## 10. Formato de servicio
 
-1️⃣ Indicar el `## Prompt de origen`
-2️⃣ Dibujar la pantalla en papel (Pseudocódigo)
-3️⃣ Escribir el bloque de controles
-4️⃣ Añadir botones
-5️⃣ Añadir grids
-6️⃣ Definir los modelos de datos
-7️⃣ Definir servicios
-
----
-
-# 14. Cómo crear especificaciones de servicios
-
-Las especificaciones de servicios definen lógica de negocio que involucra varias tablas (ej: crear transacción + actualizar stock).
-
-## Estructura de carpetas
-
-```
-especificaciones/
-├── base-de-datos/    # Esquemas y diseño de BD
-├── pantallas/        # Especificaciones de pantallas
-└── servicios/        # Especificaciones de servicios
-```
-
-## Formato
+Usar cuando la lógica de negocio involucra varias tablas (ej: crear transacción + actualizar stock).
 
 ```
 # Transacción de Entrada - Servicio
 
 ## Prompt de origen
-> Crear un servicio que reciba una cabecera OIGE y una lista de líneas IGE1, cree la transacción de entrada y actualice el stock del artículo (OITM.OnHand) y el stock por almacén (OITW.OnHand).
+> Crear un servicio que reciba una cabecera OIGE y líneas IGE1, cree la transacción y actualice el stock.
 
 ## Modelo de datos
 
 ### TransaccionEntradaRequest
 - Cabecera: Objeto
-  - Code: String, código de la transacción
+  - Code:    String, código de la transacción
   - DocDate: Date, fecha de creación
 - Lineas: Lista de objetos
-  - ItemCode: String, código de artículo
-  - Dscripcion: String, descripción del artículo
-  - Quantity: Decimal, cantidad
-  - WhsCode: String, código de almacén
+  - ItemCode:   String, código de artículo
+  - Descripcion: String, descripción del artículo
+  - Quantity:   Decimal, cantidad
+  - WhsCode:    String, código de almacén
 
 ## Servicios
 
-- Crear: Entrada(TransaccionEntradaRequest) -> Salida(OIGE)
-  - Descripción: Crea la cabecera OIGE, las líneas IGE1, y actualiza el stock
+- Crear: Entrada(TransaccionEntradaRequest) -> Salida(OIGE), Transacción: Sí
+  - Descripción: Crea la cabecera OIGE, las líneas IGE1 y actualiza el stock
   - Reglas de negocio:
     1. Validar que el artículo (ItemCode) existe en OITM
     2. Validar que el almacén (WhsCode) existe en OWHS
     3. Crear la cabecera en OIGE
     4. Crear cada línea en IGE1 con LineId secuencial
     5. Actualizar OITM.OnHand y OITW.OnHand
-    6. Usar transacción para garantizar atomicidad
+    6. Si falla cualquier paso, revertir toda la transacción
 
 ## Notas
 - Solo método CREAR (no UPDATE ni DELETE)
-- Si falla cualquier paso, se revierte toda la transacción
 ```
 
-## Reglas
+### Reglas
 
-- El título debe ser `#` seguido del nombre del servicio y "- Servicio"
-- **## Modelo de datos**: define los objetos de entrada/salida
-- **## Servicios**: lista de métodos con su descripción y reglas de negocio
-- **Indicar explícitamente si cada método usa transacción**: 
-  - `- Crear: Entrada(...) -> Salida(...), Transacción: Sí`
-  - `- Crear: Entrada(...) -> Salida(...), Transacción: No`
-  - El analista decide según la complejidad de las operaciones
-- Usar transacción cuando hay múltiples operaciones en distintas tablas que deben ser atómicas
+- El título sigue el formato: `# NombreServicio - Servicio`
+- Indicar siempre si cada método usa transacción: `Transacción: Sí` o `Transacción: No`
+- Usar transacción cuando hay operaciones en varias tablas que deben ser atómicas
+- Las reglas de negocio se numeran en orden de ejecución
 
+---
+
+# Reglas generales
+
+| ✅ Correcto | ❌ Incorrecto |
+|---|---|
+| `RazonSocial` | `Razon Social` |
+| Nombres de campos iguales en todos los sitios | Nombres distintos en modelo y grid |
+| Siempre incluir `## Prompt de origen` | Omitir el prompt de origen |
+| Un modelo por grid | Grid sin modelo definido |
+| Tipos de datos de la tabla de tipos válidos | Tipos inventados o ambiguos |
 
 

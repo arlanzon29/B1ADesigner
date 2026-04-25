@@ -73,7 +73,7 @@ return [
 | Controlador | `app/Http/Controllers/[Nombre]Controller.php` |
 | Rutas | `routes/api.php` (import del controlador + rutas) |
 | Binding | `app/Providers/AppServiceProvider.php` |
-| Test | `tests/Feature/[Nombre]ApiTest.php` |
+| Test | `tests/Feature/[Nombre]ApiTest.php` (obligatorio) |
 
 ### Para pantallas (sin tabla de BD propia)
 

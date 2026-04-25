@@ -283,6 +283,11 @@ OWHS: Objeto
 - Delete: Entrada(WhsCode) -> Salida(Boolean)
 ```
 
+### Nomenclatura de archivos
+
+- **Nombre del archivo**: `NOMBRE_TABLA.md` (ej: `OSHP.md`, `OWHS.md`)
+- No usar descripción en el nombre del archivo
+
 ### Reglas
 
 - El título sigue el formato: `# NOMBRE_TABLA - descripción`
@@ -367,6 +372,7 @@ Usar cuando la lógica de negocio involucra varias tablas (ej: crear transacció
 
 | ✅ Correcto | ❌ Incorrecto |
 |---|---|
+| `OSHP.md` | `OSHP-clase-expedicion.md` |
 | `RazonSocial` | `Razon Social` |
 | Nombres de campos iguales en todos los sitios | Nombres distintos en modelo y grid |
 | Siempre incluir `## Prompt de origen` | Omitir el prompt de origen |

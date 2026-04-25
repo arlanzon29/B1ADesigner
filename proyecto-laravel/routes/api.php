@@ -8,6 +8,8 @@ use App\Http\Controllers\Frm012Controller;
 use App\Http\Controllers\Frm030Controller;
 use App\Http\Controllers\CRD1Controller;
 use App\Http\Controllers\OITWController;
+use App\Http\Controllers\OITTController;
+use App\Http\Controllers\ITT1Controller;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/frm010consultaarticulos', [Frm010ConsultaArticulosController::class, 'consultar']);
@@ -39,3 +41,15 @@ Route::get('/oitw/{itemCode}/{whsCode}', [OITWController::class, 'getByKey']);
 Route::post('/oitw', [OITWController::class, 'add']);
 Route::put('/oitw/{itemCode}/{whsCode}', [OITWController::class, 'update']);
 Route::delete('/oitw/{itemCode}/{whsCode}', [OITWController::class, 'delete']);
+
+Route::get('/oitt/{code}', [OITTController::class, 'getByKey']);
+Route::post('/oitt', [OITTController::class, 'add']);
+Route::put('/oitt/{code}', [OITTController::class, 'update']);
+Route::delete('/oitt/{code}', [OITTController::class, 'delete']);
+Route::get('/oitt/search', [OITTController::class, 'getByItemCode']);
+
+Route::get('/itt1/{code}/{lineId}', [ITT1Controller::class, 'getByKey']);
+Route::post('/itt1', [ITT1Controller::class, 'add']);
+Route::put('/itt1/{code}/{lineId}', [ITT1Controller::class, 'update']);
+Route::delete('/itt1/{code}/{lineId}', [ITT1Controller::class, 'delete']);
+Route::get('/itt1/search', [ITT1Controller::class, 'getByCode']);

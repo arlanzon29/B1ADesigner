@@ -357,7 +357,7 @@ Usar cuando la lógica de negocio involucra varias tablas (ej: crear transacció
 ### Reglas
 
 - El título sigue el formato: `# NombreServicio - Servicio`
-- Indicar siempre si cada método usa transacción: `Transacción: Sí` o `Transacción: No`
+- Indicar siempre si cada método usa transacción: `Transacción: Sí` o `Transacción: No`, sino se indica es No
 - Usar transacción cuando hay operaciones en varias tablas que deben ser atómicas
 - Las reglas de negocio se numeran en orden de ejecución
 

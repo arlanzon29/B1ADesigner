@@ -18,6 +18,12 @@ La idea es **describir la pantalla como si fuese un formulario en papel**.
 
 ---
 
+> **Ver ejemplos reales** en la carpeta `examples/`:
+> - `001-OITM-tabla-articulos.md` - Ejemplo de tabla de base de datos
+> - `010-consulta-articulos.md` - Ejemplo de pantalla de consulta
+
+---
+
 # 1. Cómo diseñar la pantalla
 
 Primero piensa la pantalla como un formulario dividido en bloques:

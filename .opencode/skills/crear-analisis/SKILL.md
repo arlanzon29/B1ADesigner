@@ -371,5 +371,64 @@ Siempre seguir este orden:
 6️⃣ Definir los modelos de datos
 7️⃣ Definir servicios
 
+---
+
+# 14. Cómo crear especificaciones de servicios
+
+Las especificaciones de servicios definen lógica de negocio que involucra varias tablas (ej: crear transacción + actualizar stock).
+
+## Estructura de carpetas
+
+```
+especificaciones/
+├── base-de-datos/    # Esquemas y diseño de BD
+├── pantallas/        # Especificaciones de pantallas
+└── servicios/        # Especificaciones de servicios
+```
+
+## Formato
+
+```
+# Transacción de Entrada - Servicio
+
+## Prompt de origen
+> Crear un servicio que reciba una cabecera OIGE y una lista de líneas IGE1, cree la transacción de entrada y actualice el stock del artículo (OITM.OnHand) y el stock por almacén (OITW.OnHand).
+
+## Modelo de datos
+
+### TransaccionEntradaRequest
+- Cabecera: Objeto
+  - Code: String, código de la transacción
+  - DocDate: Date, fecha de creación
+- Lineas: Lista de objetos
+  - ItemCode: String, código de artículo
+  - Dscripcion: String, descripción del artículo
+  - Quantity: Decimal, cantidad
+  - WhsCode: String, código de almacén
+
+## Servicios
+
+- Crear: Entrada(TransaccionEntradaRequest) -> Salida(OIGE)
+  - Descripción: Crea la cabecera OIGE, las líneas IGE1, y actualiza el stock
+  - Reglas de negocio:
+    1. Validar que el artículo (ItemCode) existe en OITM
+    2. Validar que el almacén (WhsCode) existe en OWHS
+    3. Crear la cabecera en OIGE
+    4. Crear cada línea en IGE1 con LineId secuencial
+    5. Actualizar OITM.OnHand y OITW.OnHand
+    6. Usar transacción para garantizar atomicidad
+
+## Notas
+- Solo método CREAR (no UPDATE ni DELETE)
+- Si falla cualquier paso, se revierte toda la transacción
+```
+
+## Reglas
+
+- El título debe ser `#` seguido del nombre del servicio y "- Servicio"
+- **## Modelo de datos**: define los objetos de entrada/salida
+- **## Servicios**: lista de métodos con su descripción y reglas de negocio
+- Usar transacción cuando hay múltiples operaciones que deben ser atómicas
+
 
 

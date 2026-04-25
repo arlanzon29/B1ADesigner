@@ -14,8 +14,10 @@ use App\Interfaces\IOITWRepository;
 use App\Interfaces\IOITTRepository;
 use App\Interfaces\IITT1Repository;
 use App\Interfaces\IIGE1Repository;
+use App\InterfacesService\IOigeService;
 use App\Repositories\ITT1Repository;
 use App\Repositories\IGE1Repository;
+use App\Services\OigeService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(IOITTRepository::class, OITTRepository::class);
         $this->app->bind(IITT1Repository::class, ITT1Repository::class);
         $this->app->bind(IIGE1Repository::class, IGE1Repository::class);
+        $this->app->bind(IOigeService::class, OigeService::class);
     }
 
     public function boot(): void

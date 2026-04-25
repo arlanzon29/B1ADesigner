@@ -12,6 +12,7 @@ use App\Http\Controllers\OITWController;
 use App\Http\Controllers\OITTController;
 use App\Http\Controllers\ITT1Controller;
 use App\Http\Controllers\IGE1Controller;
+use App\Http\Controllers\OigeServiceController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/frm010consultaarticulos', [Frm010ConsultaArticulosController::class, 'consultar']);
@@ -66,3 +67,5 @@ Route::get('/ige1/{code}/{lineId}', [IGE1Controller::class, 'getByKey']);
 Route::post('/ige1', [IGE1Controller::class, 'add']);
 Route::put('/ige1/{code}/{lineId}', [IGE1Controller::class, 'update']);
 Route::delete('/ige1/{code}/{lineId}', [IGE1Controller::class, 'delete']);
+
+Route::post('/oige-service', [OigeServiceController::class, 'crear']);

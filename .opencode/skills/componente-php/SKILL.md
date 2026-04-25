@@ -90,6 +90,17 @@ routes/api.php (incluir import del controlador)
 app/Providers/AppServiceProvider.php (registrar binding)
 ```
 
+### Para servicios (lógica de negocio)
+```
+especificaciones/servicios/[NombreServicio].md  // Especificación
+app/ModelsService/[Nombre]Request.php           // Modelo de request
+app/InterfacesService/I[Nombre]Service.php      // Interfaz del servicio
+app/services/[Nombre]Service.php                // Implementación del servicio
+app/Http/Controllers/[Nombre]Controller.php     // Controlador
+routes/api.php (incluir import del controlador)
+app/Providers/AppServiceProvider.php (registrar binding)
+```
+
 ## Diseño de Pantalla
 
 ### Cabecera de la página

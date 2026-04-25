@@ -46,7 +46,7 @@ class OITTController extends Controller
 
     public function getByItemCode(Request $request)
     {
-        $itemCode = $request->query('itemCode');
+        $itemCode = $request->query('itemCode') ?: null;
         return $this->repository->getByItemCode($itemCode);
     }
 }

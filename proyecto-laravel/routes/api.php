@@ -46,7 +46,7 @@ Route::get('/oitt/{code}', [OITTController::class, 'getByKey']);
 Route::post('/oitt', [OITTController::class, 'add']);
 Route::put('/oitt/{code}', [OITTController::class, 'update']);
 Route::delete('/oitt/{code}', [OITTController::class, 'delete']);
-Route::get('/oitt/search', [OITTController::class, 'getByItemCode']);
+Route::get('/oitt', [OITTController::class, 'getByItemCode']);
 
 Route::get('/itt1/{code}/{lineId}', [ITT1Controller::class, 'getByKey']);
 Route::post('/itt1', [ITT1Controller::class, 'add']);

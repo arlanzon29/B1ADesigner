@@ -6,9 +6,11 @@ description: Sirve para crear componentes Laravel siguiendo un pseudocodigo
 # Normas para la creación de un componente Laravel
 
 - **Los modelos Eloquent deben usar nombres en mayúsculas** (ej: `OITT`, `ITT1`, `OITM`)
+- **Los nombres de interfaces deben seguir el mismo caso que el modelo** (ej: `IOITMRepository`, `IOITTRepository`)
 - Los nombres de archivos de modelos deben usar mayúsculas (ej: `OITT.php`, `ITT1.php`)
-- El objetivo es fijar una serie de normas para poder generar código PHP/Laravel a partir de un pseudocódigo
+- El objetivo es fixer una serie de normas para poder generar código PHP/Laravel a partir de un pseudocódigo
 - Las rutas API deben usar el nombre completo de la pantalla (ej: `frm012ficharticulo`) para mantener consistencia
+- Para claves primarias compuestas, usar `DB::table()` en los métodos update y delete del repositorio (NO usar Eloquent save/delete)
 - Para cada tabla se deben crear los siguientes archivos:
     1. **Migración** en `database/migrations/`
     2. **Modelo** en `app/Models/`
@@ -426,6 +428,34 @@ class DbgAlbaranesModelo extends Model
 
 ## Definición de Servicios
 
+### Claves primarias compuestas
+
+Para tablas con clave primaria compuesta (ej: `ITT1`, `CRD1`, `OITW`), usar `DB::table()` en los métodos update y delete:
+
+``` Codigo PHP/Laravel
+public function update(ITT1 $elemento): array
+{
+    try {
+        $existente = ITT1::where('Code', $elemento->Code)->where('LineId', $elemento->LineId)->first();
+        if (!$existente) {
+            return ['success' => false, 'data' => null, 'message' => 'No encontrado'];
+        }
+        DB::table('itt1')
+            ->where('Code', $elemento->Code)
+            ->where('LineId', $elemento->LineId)
+            ->update([
+                'ItemCode' => $elemento->ItemCode,
+                'ItemName' => $elemento->ItemName,
+                'Quantity' => $elemento->Quantity,
+            ]);
+        $actualizado = ITT1::where('Code', $elemento->Code)->where('LineId', $elemento->LineId)->first();
+        return ['success' => true, 'data' => $actualizado, 'message' => 'Actualizado correctamente'];
+    } catch (\Exception $e) {
+        return ['success' => false, 'data' => null, 'message' => 'Error al actualizar: ' . $e->getMessage()];
+    }
+}
+```
+
 En el pseudocódigo podemos indicar una serie de servicios que podemos utilizar, vamos a crear una interfaz con una serie de funciones que devuelven
 tipo array.
 
@@ -588,4 +618,78 @@ Añadir el import del controlador:
 
 ```php
 use App\Http\Controllers\Frm012Controller;
+```
+
+## Testing con PHPUnit
+
+### Tests de API REST
+
+Crear archivos de test en `tests/Feature/` siguiendo el patrón `<Tabla>ApiTest.php`:
+
+``` Codigo PHP/Laravel
+<?php
+
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+use App\Models\OITT;
+
+class OITTApiTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_can_get_oitt_by_key()
+    {
+        OITT::create([
+            'Code' => 'LIST001',
+            'ItemCode' => 'ITEM001',
+            'ItemName' => 'Articulo prueba',
+            'Quantity' => 1
+        ]);
+
+        $response = $this->getJson('/api/oitt/LIST001');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'data' => [
+                    'Code' => 'LIST001'
+                ]
+            ]);
+    }
+
+    public function test_can_create_oitt()
+    {
+        $data = [
+            'Code' => 'LIST002',
+            'ItemCode' => 'ITEM002',
+            'ItemName' => 'Articulo nuevo',
+            'Quantity' => 2
+        ];
+
+        $response = $this->postJson('/api/oitt', $data);
+
+        $response->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('oitt', ['Code' => 'LIST002']);
+    }
+}
+```
+
+### Ejecución de tests
+
+```bash
+php artisan test              # Todos los tests
+php artisan test --filter=OITTApiTest  # Solo tests de OITT
+```
+
+### Normas para tests
+
+- Usar `RefreshDatabase` para cada test
+- Crear datos con el modelo antes de cada test
+- Verificar con `assertJson` y `assertDatabaseHas`/`assertDatabaseMissing`
+- Verificar mensajes de respuesta con mayúsculas/minúsculas exactas
+- Los tests deben incluir todos los campos obligatorios del modelo (ej: `CardType` en `OCRD`)
 ```

@@ -10,5 +10,5 @@ interface IOITTRepository
     public function add(OITT $elemento): array;
     public function update(OITT $elemento): array;
     public function delete(string $code): array;
-    public function getByItemCode(string $itemCode): array;
+    public function getByItemCode(?string $itemCode): array;
 }

@@ -30,8 +30,15 @@ class OITTRepository implements IOITTRepository
     public function update(OITT $elemento): array
     {
         try {
-            $elemento->save();
-            return ['success' => true, 'data' => $elemento, 'message' => 'Actualizado correctamente'];
+            $existente = OITT::find($elemento->Code);
+            if (!$existente) {
+                return ['success' => false, 'data' => null, 'message' => 'No encontrado'];
+            }
+            $existente->ItemCode = $elemento->ItemCode;
+            $existente->ItemName = $elemento->ItemName;
+            $existente->Quantity = $elemento->Quantity;
+            $existente->save();
+            return ['success' => true, 'data' => $existente, 'message' => 'Actualizado correctamente'];
         } catch (\Exception $e) {
             return ['success' => false, 'data' => null, 'message' => 'Error al actualizar: ' . $e->getMessage()];
         }
@@ -51,9 +58,13 @@ class OITTRepository implements IOITTRepository
         }
     }
 
-    public function getByItemCode(string $itemCode): array
+    public function getByItemCode(?string $itemCode): array
     {
-        $lista = OITT::where('ItemCode', $itemCode)->get();
+        if (!$itemCode) {
+            $lista = OITT::all();
+        } else {
+            $lista = OITT::where('ItemCode', $itemCode)->get();
+        }
         return ['success' => true, 'data' => $lista, 'message' => 'OK'];
     }
 }

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\IOITWRepository;
 use App\Models\OITW;
+use Illuminate\Support\Facades\DB;
 
 class OITWRepository implements IOITWRepository
 {
@@ -83,10 +84,14 @@ class OITWRepository implements IOITWRepository
                     'message' => 'Stock no encontrado'
                 ];
             }
-            $elemento->save();
+            DB::table('oitw')
+                ->where('ItemCode', $elemento->ItemCode)
+                ->where('WhsCode', $elemento->WhsCode)
+                ->update(['OnHand' => $elemento->OnHand]);
+            $actualizado = OITW::where('ItemCode', $elemento->ItemCode)->where('WhsCode', $elemento->WhsCode)->first();
             return [
                 'success' => true,
-                'data' => $elemento,
+                'data' => $actualizado,
                 'message' => 'Stock actualizado correctamente'
             ];
         } catch (\Exception $e) {
@@ -111,7 +116,10 @@ class OITWRepository implements IOITWRepository
                     'message' => 'Stock no encontrado'
                 ];
             }
-            $elemento->delete();
+            DB::table('oitw')
+                ->where('ItemCode', $itemCode)
+                ->where('WhsCode', $whsCode)
+                ->delete();
             return [
                 'success' => true,
                 'data' => true,
